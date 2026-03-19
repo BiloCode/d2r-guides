@@ -1,4 +1,4 @@
-type Rune = {
+export type Rune = {
   name: string;
   order: number;
 };

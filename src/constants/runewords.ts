@@ -1,10 +1,4 @@
-type Runeword = {
-  key: string;
-  runes: string[];
-  name: Record<string, string>;
-  level: Record<string, string>;
-  apply_on: Record<string, string[]>;
-};
+import { Runeword } from "@/typings/runeword";
 
 export const Runewords: Record<string, Runeword> = {
   stealth: {

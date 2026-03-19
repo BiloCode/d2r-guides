@@ -1,5 +1,7 @@
-import Image from "next/image";
+"use client";
+
 import { Runes } from "@/constants/runes";
+
 import {
   Tooltip,
   TooltipContent,
@@ -8,25 +10,27 @@ import {
 
 type Props = {
   name: string;
-  side: "left" | "right" | "top" | "bottom";
+  tooltip: "left" | "right" | "top" | "bottom";
 };
 
-export const Rune = ({ name, side }: Props) => (
+export const RuneIcon = ({ name, tooltip }: Props) => (
   <Tooltip>
     <TooltipTrigger asChild>
-      <div className="size-12 shrink-0">
-        <Image
+      <div className="size-8 md:size-12 shrink-0">
+        <img
           src={`/images/${name}_rune.png`}
+          alt={`${name} rune`}
           width={48}
           height={48}
-          alt={`${name} rune`}
+          className="size-8 md:size-12"
+          loading="lazy"
           style={{
             imageRendering: "pixelated",
           }}
         />
       </div>
     </TooltipTrigger>
-    <TooltipContent side={side}>
+    <TooltipContent side={tooltip}>
       <span className="font-bold uppercase">{Runes[name].name}</span>
     </TooltipContent>
   </Tooltip>
