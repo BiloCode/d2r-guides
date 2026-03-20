@@ -47,7 +47,7 @@ export default async function RootLayout({
         inter.variable,
       )}
     >
-      <body className="min-h-full flex flex-col bg-gray-900">
+      <body className="min-h-full flex flex-col bg-neutral-900">
         <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>

@@ -1,7 +1,4 @@
-export type Rune = {
-  name: string;
-  order: number;
-};
+import type { Rune } from "@/typings/rune";
 
 export const Runes: Record<string, Rune> = {
   el: { name: "el", order: 1 },
