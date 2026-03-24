@@ -1,3 +1,5 @@
+"use server";
+
 import type { Locale } from "@/typings/locale";
 
 import { getResults } from "@/helpers/search";

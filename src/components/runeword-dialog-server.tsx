@@ -15,28 +15,38 @@ type Props = {
 
 export const RunewordDialogServer = ({ locale }: Props) => {
   const params = useSearchParams();
+  const paramsId = params.get("name") ?? undefined;
 
-  const [isOpen, setIsOpen] = useState(params.get("dialog") !== null);
+  const [isOpen, setIsOpen] = useState(() => {
+    if (typeof paramsId === "undefined") {
+      return false;
+    }
 
-  if (params.get("dialog") === null) {
+    if (typeof Runewords[paramsId] === "undefined") {
+      return false;
+    }
+
+    return true;
+  });
+
+  if (typeof paramsId === "undefined") {
     return <></>;
   }
 
-  const runeword_key = params.get("dialog") as string;
-  const runeword = Runewords[runeword_key];
-
-  const onClose = () => {
-    setIsOpen(false);
-    window.history.replaceState(null, "", window.location.pathname);
-  };
+  if (typeof Runewords[paramsId] === "undefined") {
+    return <></>;
+  }
 
   return (
     <RunewordDialog
       open={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        setIsOpen(false);
+        window.history.replaceState(null, "", window.location.pathname);
+      }}
       metadata={{
         locale,
-        runeword,
+        runeword: Runewords[paramsId],
       }}
     />
   );

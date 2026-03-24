@@ -26,6 +26,7 @@ type Context = {
   };
   runewords: Runeword[];
   onRunewordSearch: (search: string) => void;
+  onRunewordGameSearch: (search: string) => void;
   onRunewordQuantitySearch: (search: string) => void;
   onRunewordExpansionSearch: (search: string) => void;
 };
@@ -34,6 +35,7 @@ export const RunewordContext = createContext<Partial<Context>>({});
 
 export const RunewordProvider = (props: Props) => {
   const [query, setQuery] = useState({
+    game: "",
     search: "",
     quantity: "",
     expansion: "",
@@ -56,7 +58,15 @@ export const RunewordProvider = (props: Props) => {
             (runeword) => runeword.runes.length === Number(query.quantity),
           );
 
-    return searchByQuantity;
+    const searchByGame =
+      query.game === ""
+        ? searchByQuantity
+        : searchByQuantity.filter((runeword) => {
+            if (query.game === "ladder") return Boolean(runeword.ladder);
+            return runeword;
+          });
+
+    return searchByGame;
   }, [query]);
 
   const onRunewordSearch = useMemo(
@@ -66,6 +76,16 @@ export const RunewordProvider = (props: Props) => {
       }, 300),
     [],
   );
+
+  const onRunewordGameSearch = useCallback((search: string) => {
+    const matcher: Record<string, string> = {
+      ladder: "ladder",
+      non_ladder: "non_ladder",
+      "any-game": "",
+    };
+
+    setQuery((prev) => ({ ...prev, game: matcher[search] }));
+  }, []);
 
   const onRunewordQuantitySearch = useCallback((search: string) => {
     const matcher: Record<string, string> = {
@@ -96,6 +116,7 @@ export const RunewordProvider = (props: Props) => {
         query,
         runewords,
         onRunewordSearch,
+        onRunewordGameSearch,
         onRunewordQuantitySearch,
         onRunewordExpansionSearch,
       }}

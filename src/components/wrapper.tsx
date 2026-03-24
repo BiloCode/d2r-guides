@@ -1,5 +1,6 @@
+import type { PropsWithChildren } from "react";
+
 import { cn } from "@/lib/utils";
-import { PropsWithChildren } from "react";
 
 type Props = PropsWithChildren & {
   className?: string;
@@ -8,7 +9,7 @@ type Props = PropsWithChildren & {
 export const Wrapper = ({ children, className }: Props) => (
   <div
     className={cn(
-      "max-w-7xl w-full mx-auto py-6 px-6 md:py-8 md:px-8",
+      "max-w-7xl w-full mx-auto py-4 px-4 md:py-8 md:px-8",
       className,
     )}
   >

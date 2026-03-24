@@ -8,7 +8,7 @@ import { Runes } from "@/constants/runes";
 
 import { RuneImage } from "@/components/rune-image";
 
-import { useRunewordContext } from "@/contexts/runeword-context";
+import { useRunewordContext } from "@/store/runeword-context";
 
 export const RunewordRunes = () => {
   const { query } = useRunewordContext();

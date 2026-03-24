@@ -14,6 +14,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { RunewordDialogOption } from "@/components/runeword-dialog-option";
+
 type Props = DialogProps & {
   metadata: {
     locale: Locale;
@@ -45,38 +47,32 @@ export const RunewordDialog = ({ open, metadata, onClose }: Props) => {
 
         <div className="w-full h-px bg-neutral-200"></div>
 
-        {typeof runeword.details !== "undefined" && (
+        {typeof runeword.options !== "undefined" && (
           <div className="grid cursor-default text-center">
-            {runeword.details?.[locale].map((option, index) => (
-              <p
-                key={index}
-                className="py-1 text-sm font-light text-neutral-600 hover:text-neutral-900"
-              >
-                {option}
-              </p>
+            {runeword.options?.[locale].map((option, index) => (
+              <RunewordDialogOption key={index} option={option} />
             ))}
           </div>
         )}
 
-        {typeof runeword.details_on !== "undefined" && (
-          <Tabs defaultValue={runeword.details_on[0].key} className="w-full">
+        {typeof runeword.options_tabs !== "undefined" && (
+          <Tabs defaultValue={runeword.options_tabs[0].key} className="w-full">
             <TabsList className="self-center">
-              {runeword.details_on.map((tab) => (
+              {runeword.options_tabs.map((tab) => (
                 <TabsTrigger key={tab.key} value={tab.key}>
                   {tab.name[locale]}
                 </TabsTrigger>
               ))}
             </TabsList>
-            {runeword.details_on.map((tab) => (
+            {runeword.options_tabs.map((tab) => (
               <TabsContent key={tab.key} value={tab.key}>
                 <div className="grid cursor-default">
                   {tab.items[locale].map((option, index) => (
-                    <p
+                    <RunewordDialogOption
                       key={index}
-                      className="py-1 text-sm font-light text-neutral-600 hover:text-neutral-900 text-center"
-                    >
-                      {option}
-                    </p>
+                      option={option}
+                      className="text-center"
+                    />
                   ))}
                 </div>
               </TabsContent>
@@ -86,11 +82,11 @@ export const RunewordDialog = ({ open, metadata, onClose }: Props) => {
 
         <div className="w-full h-px bg-neutral-200"></div>
 
-        <div className="flex justify-center">
+        <div className="w-full flex justify-center">
           <a
             href={runeword.references[locale]}
             target="_blank"
-            className="text-blue-700 hover:underline text-center"
+            className="text-xs md:text-sm text-blue-700 hover:underline text-center"
           >
             {runeword.references[locale]}
           </a>

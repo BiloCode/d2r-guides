@@ -32,7 +32,7 @@ export const RunewordCardLink = ({ locale, runeword }: Props) => {
     <Fragment>
       <Link
         className="flex-1 min-w-64 lg:min-w-80 "
-        href={`/${locale}/runewords?dialog=${runeword.key}`}
+        href={`/${locale}/runewords?name=${runeword.key}`}
         onClick={onClick}
       >
         <RunewordCard locale={locale} runeword={runeword} />

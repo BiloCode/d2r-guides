@@ -31,6 +31,10 @@ export const Runewords_Titles = {
     es: "No hay resultados para esta búsqueda",
     en: "No results found",
   },
+  search_result: {
+    es: "Resultados mostrados",
+    en: "Results shown",
+  },
   search_placeholder: {
     es: "Nombre, Runas y Equipamiento",
     en: "Name, Runes, and Equipment",
