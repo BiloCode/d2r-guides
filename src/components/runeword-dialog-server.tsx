@@ -5,9 +5,11 @@ import { useSearchParams } from "next/navigation";
 
 import type { Locale } from "@/typings/locale";
 
+import { History } from "@/helpers/history";
+
 import { Runewords } from "@/constants/runewords";
 
-import { RunewordDialog } from "@/components/runeword-dialog";
+import { RunewordDialogClient } from "@/components/runeword-dialog-client";
 
 type Props = {
   locale: Locale;
@@ -37,13 +39,22 @@ export const RunewordDialogServer = ({ locale }: Props) => {
     return <></>;
   }
 
+  const onClose = () => {
+    setIsOpen(false);
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has("name")) {
+      params.delete("name");
+    }
+
+    History.replace({ params });
+  };
+
   return (
-    <RunewordDialog
+    <RunewordDialogClient
       open={isOpen}
-      onClose={() => {
-        setIsOpen(false);
-        window.history.replaceState(null, "", window.location.pathname);
-      }}
+      onClose={onClose}
       metadata={{
         locale,
         runeword: Runewords[paramsId],

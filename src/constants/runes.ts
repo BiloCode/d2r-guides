@@ -35,3 +35,5 @@ export const Runes: Record<string, Rune> = {
   cham: { name: "cham", order: 32 },
   zod: { name: "zod", order: 33 },
 } as const;
+
+export const RunesKeys = Object.keys(Runes);

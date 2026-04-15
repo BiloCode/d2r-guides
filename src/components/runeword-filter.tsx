@@ -1,12 +1,13 @@
 "use client";
 
 import { ChangeEvent } from "react";
+import { useContext, useContextSelector } from "use-context-selector";
 
 import type { Locale } from "@/typings/locale";
 
 import { Runewords_Titles } from "@/constants/information";
 
-import { useRunewordContext } from "@/store/runeword-context";
+import { RunewordContext } from "@/store/runeword-context";
 
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -24,70 +25,81 @@ type Props = {
 };
 
 export const RunewordFilter = ({ locale }: Props) => {
+  const query = useContextSelector(RunewordContext, (s) => s.query);
+  const runewords = useContextSelector(RunewordContext, (s) => s.runewords);
+
   const {
-    runewords,
     onRunewordSearch,
-    onRunewordQuantitySearch,
+    onRunewordSocketsSearch,
     onRunewordExpansionSearch,
-  } = useRunewordContext();
+  } = useContext(RunewordContext);
 
   const onSearchChange = (ev: ChangeEvent<HTMLInputElement>) => {
     onRunewordSearch(ev.target.value ?? "");
   };
 
-  const onQuantityChange = (value: string) => {
-    onRunewordQuantitySearch(value);
+  const onSocketsChange = (value: string) => {
+    onRunewordSocketsSearch(value);
   };
 
   const onExpansionChange = (value: string) => {
     onRunewordExpansionSearch(value);
   };
 
+  const search = query.search;
+  const sockets = query.sockets ? query.sockets + "-runes" : "";
+  const expansion = query.expansion;
+
   return (
-    <div className="w-full">
+    <div className="w-full border-neutral-800 border-2 bg-neutral-800/50 p-4 md:px-6 md:py-6 rounded-md">
       <div className="w-full flex flex-wrap md:flex-nowrap gap-3 md:gap-2">
         <Field className="w-full gap-1">
           <FieldLabel
-            htmlFor="search-by-name"
+            htmlFor="search"
             className="text-xs md:text-base text-neutral-300"
           >
             {Runewords_Titles["search"][locale]}
           </FieldLabel>
           <Input
             type="search"
-            id="search-by-name"
+            id="search"
             autoComplete="off"
             className="text-xs md:text-base border-neutral-600 text-neutral-300"
             placeholder={Runewords_Titles["search_placeholder"][locale]}
+            value={search}
             onChange={onSearchChange}
           />
         </Field>
 
         <Field className="flex-1 md:min-w-48 gap-1">
           <FieldLabel className="text-xs md:text-base text-neutral-300">
-            {Runewords_Titles["quantity"][locale]}
+            {Runewords_Titles["sockets"][locale]}
           </FieldLabel>
-          <Select defaultValue="any-runes" onValueChange={onQuantityChange}>
+          <Select
+            defaultValue="any-sockets"
+            value={sockets}
+            onValueChange={onSocketsChange}
+          >
             <SelectTrigger className="text-xs md:text-base border-neutral-600 text-neutral-400">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="any-runes" className="h-6 md:h-7" />
+                <SelectItem value="any-sockets" className="h-6 md:h-7" />
                 <SelectItem value="2-runes" className="text-xs md:text-base">
-                  {Runewords_Titles["quantity_list"][0][locale]}
+                  {Runewords_Titles["sockets_list"][0][locale]}
                 </SelectItem>
                 <SelectItem value="3-runes" className="text-xs md:text-base">
-                  {Runewords_Titles["quantity_list"][1][locale]}
+                  {Runewords_Titles["sockets_list"][1][locale]}
                 </SelectItem>
                 <SelectItem value="4-runes" className="text-xs md:text-base">
-                  {Runewords_Titles["quantity_list"][2][locale]}
+                  {Runewords_Titles["sockets_list"][2][locale]}
                 </SelectItem>
                 <SelectItem value="5-runes" className="text-xs md:text-base">
-                  {Runewords_Titles["quantity_list"][3][locale]}
+                  {Runewords_Titles["sockets_list"][3][locale]}
                 </SelectItem>
                 <SelectItem value="6-runes" className="text-xs md:text-base">
-                  {Runewords_Titles["quantity_list"][4][locale]}
+                  {Runewords_Titles["sockets_list"][4][locale]}
                 </SelectItem>
               </SelectGroup>
             </SelectContent>
@@ -100,6 +112,7 @@ export const RunewordFilter = ({ locale }: Props) => {
           </FieldLabel>
           <Select
             defaultValue="any-expansion"
+            value={expansion}
             onValueChange={onExpansionChange}
           >
             <SelectTrigger className="text-xs md:text-base border-neutral-600 text-neutral-400">

@@ -3,8 +3,9 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/typings/locale";
 import type { Runeword } from "@/typings/runeword";
 
+import { Tag } from "@/components/tag";
 import { Badge } from "@/components/ui/badge";
-import { RuneImage } from "@/components/rune-image";
+import { RunewordIcon } from "@/components/runeword-icon";
 
 type Props = {
   locale: Locale;
@@ -28,7 +29,7 @@ export const RunewordCard = ({ locale, runeword }: Props) => (
     </div>
     <div className="flex-1 flex justify-center flex-wrap items-center gap-1">
       {runeword.runes.map((rune, index) => (
-        <RuneImage key={index} name={rune} />
+        <RunewordIcon key={index} rune={rune} />
       ))}
     </div>
 
@@ -39,17 +40,8 @@ export const RunewordCard = ({ locale, runeword }: Props) => (
     </div>
 
     <div className="absolute top-3 left-3 grid gap-1">
-      {runeword.expansion === "row" && (
-        <span className="w-full px-3 md:px-4 py-0.5 rounded-xs bg-violet-800 text-gray-50 font-bold text-center text-xs">
-          RoW
-        </span>
-      )}
-
-      {runeword.ladder && (
-        <span className="w-full px-3 md:px-4 py-0.5 rounded-xs bg-lime-600 text-gray-50 font-bold text-center text-xs">
-          Ladder
-        </span>
-      )}
+      {runeword.expansion === "row" && <Tag theme="violet">RoW</Tag>}
+      {runeword.ladder && <Tag theme="lime">Ladder</Tag>}
     </div>
 
     {Boolean(runeword.version) && (

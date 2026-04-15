@@ -1,49 +1,55 @@
+export const Navigation = [
+  {
+    key: "runewords",
+    url: "/runewords",
+    name: {
+      es: "Palabras rúnicas",
+      en: "Runewords",
+    },
+    disabled: false,
+  },
+  {
+    key: "recipes",
+    url: "/recipes",
+    name: {
+      es: "Recetas del Cubo Horádrico",
+      en: "Horadric Cube Recipes",
+    },
+    disabled: true,
+  },
+];
+
 export const Home_Titles = {
   main: {
-    es: "¿Que estas buscando?",
+    es: "¿Qué buscas?",
     en: "What are you looking for?",
   },
 };
 
-export const Home_Options = {
-  links: {
-    runewords: {
-      es: "Palabras runicas",
-      en: "Runewords",
-    },
-    recipes: {
-      es: "Recetas del cubo",
-      en: "Cube recipes",
-    },
-    dlc: {
-      es: "Reign of the Warlock",
-      en: "Reign of the Warlock",
-    },
-  },
-};
+export const Home_Options = {};
 
 export const Runewords_Titles = {
   search: {
-    es: "Busca por:",
+    es: "Buscar por:",
     en: "Search by:",
   },
   search_empty: {
-    es: "No hay resultados para esta búsqueda",
+    es: "No se encontraron resultados",
     en: "No results found",
   },
   search_result: {
-    es: "Resultados mostrados",
-    en: "Results shown",
+    es: "Resultados",
+    en: "Results",
   },
   search_placeholder: {
-    es: "Nombre, Runas y Equipamiento",
-    en: "Name, Runes, and Equipment",
+    es: "Nombre o runas",
+    en: "Name or Runes",
   },
-  quantity: {
-    es: "Cantidad:",
-    en: "Quantity:",
+  sockets: {
+    es: "Sockets:",
+    en: "Sockets:",
   },
-  quantity_list: [
+  sockets_list: [
     { es: "2 runas", en: "2 runes" },
     { es: "3 runas", en: "3 runes" },
     { es: "4 runas", en: "4 runes" },
@@ -58,7 +64,7 @@ export const Runewords_Titles = {
 
 export const Runewords_Subtitles = {
   runewords: {
-    es: "Palabras Runicas",
+    es: "Palabras rúnicas",
     en: "Runewords",
   },
 };

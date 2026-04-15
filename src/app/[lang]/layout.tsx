@@ -3,9 +3,9 @@ import "../globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 
-import { TooltipProvider } from "@/components/ui/tooltip";
-
 import { Header } from "@/components/header";
+
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { cn } from "@/lib/utils";
 import { getPageParams } from "@/helpers/server";

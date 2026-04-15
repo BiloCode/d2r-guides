@@ -1,35 +1,29 @@
 import Fuse from "fuse.js";
 
-import { Runes } from "@/constants/runes";
 import { Locales } from "@/constants/locale";
 import { Runewords } from "@/constants/runewords";
 
-export const getResults = (search: unknown) => {
-  const runes = Object.keys(Runes);
-  const runewords = Object.values(Runewords);
+import { isQueryShort, isQueryRunes } from "./matcher";
 
+export const findRunewords = (search: unknown) => {
+  const list = Object.values(Runewords);
   const query = String(search ?? "")
     .toLowerCase()
     .trim();
 
-  if (query.length < 2) {
-    return runewords;
+  if (isQueryShort(query)) {
+    return list;
   }
 
-  const isLevel = query.match(/^(?:(?:lv|nv)\.?\s*)?\d+$/i);
-  const isPattern = query.match(/^[a-zA-Z]+(?:\+[a-zA-Z]+)*\+?$/i);
+  if (isQueryRunes(query)) {
+    const parts = query.split("+").filter((part) => Boolean(part));
 
-  if (isPattern) {
-    const slides = query.split("+").filter((p) => p !== "");
-
-    if (slides.every((s) => runes.includes(s))) {
-      return runewords.filter((runeword) =>
-        slides.some((s) => runeword.runes.includes(s)),
-      );
-    }
+    return list.filter((runeword) =>
+      parts.some((s) => runeword.runes.includes(s)),
+    );
   }
 
-  const fuse = new Fuse(runewords, {
+  const fuse = new Fuse(list, {
     keys: Locales.map((locale) => `name.${locale}`),
     threshold: 0.1,
   });

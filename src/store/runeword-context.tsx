@@ -1,81 +1,66 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { createContext } from "use-context-selector";
 
 import type { Runeword } from "@/typings/runeword";
 
-import { debounce } from "@/helpers/debounce";
-import { getResults } from "@/helpers/search";
+import { History } from "@/helpers/history";
+import { findRunewords } from "@/helpers/search";
+
+import { useUpdateEffect } from "@/hooks/use-update-effect";
 
 type Props = PropsWithChildren & {
-  runewords: Runeword[];
+  game: string;
+  search: string;
+  sockets: string;
+  expansion: string;
 };
 
 type Context = {
   query: {
+    game: string;
     search: string;
-    quantity: string;
+    sockets: string;
     expansion: string;
   };
   runewords: Runeword[];
   onRunewordSearch: (search: string) => void;
   onRunewordGameSearch: (search: string) => void;
-  onRunewordQuantitySearch: (search: string) => void;
+  onRunewordSocketsSearch: (search: string) => void;
   onRunewordExpansionSearch: (search: string) => void;
 };
 
-export const RunewordContext = createContext<Partial<Context>>({});
+export const RunewordContext = createContext<Context>({
+  query: { game: "", search: "", expansion: "", sockets: "" },
+  runewords: [],
+  onRunewordSearch: () => {},
+  onRunewordGameSearch: () => {},
+  onRunewordSocketsSearch: () => {},
+  onRunewordExpansionSearch: () => {},
+});
 
 export const RunewordProvider = (props: Props) => {
+  const clock = useRef<number>(-1);
+
   const [query, setQuery] = useState({
-    game: "",
-    search: "",
-    quantity: "",
-    expansion: "",
+    game: props.game,
+    search: props.search,
+    sockets: props.sockets,
+    expansion: props.expansion,
   });
 
-  const runewords = useMemo(() => {
-    const searchByText = getResults(query.search);
+  const [deferred, setDeferred] = useState({
+    game: props.game,
+    search: props.search,
+    sockets: props.sockets,
+    expansion: props.expansion,
+  });
 
-    const searchByExpansion =
-      query.expansion === ""
-        ? searchByText
-        : searchByText.filter(
-            (runeword) => runeword.expansion === query.expansion,
-          );
-
-    const searchByQuantity =
-      query.quantity === ""
-        ? searchByExpansion
-        : searchByExpansion.filter(
-            (runeword) => runeword.runes.length === Number(query.quantity),
-          );
-
-    const searchByGame =
-      query.game === ""
-        ? searchByQuantity
-        : searchByQuantity.filter((runeword) => {
-            if (query.game === "ladder") return Boolean(runeword.ladder);
-            return runeword;
-          });
-
-    return searchByGame;
-  }, [query]);
-
-  const onRunewordSearch = useMemo(
-    () =>
-      debounce((search: string) => {
-        setQuery((prev) => ({ ...prev, search }));
-      }, 300),
-    [],
-  );
+  const onRunewordSearch = useCallback((search: string) => {
+    setQuery((prev) => ({ ...prev, search }));
+  }, []);
 
   const onRunewordGameSearch = useCallback((search: string) => {
     const matcher: Record<string, string> = {
@@ -87,17 +72,17 @@ export const RunewordProvider = (props: Props) => {
     setQuery((prev) => ({ ...prev, game: matcher[search] }));
   }, []);
 
-  const onRunewordQuantitySearch = useCallback((search: string) => {
+  const onRunewordSocketsSearch = useCallback((search: string) => {
     const matcher: Record<string, string> = {
       "2-runes": "2",
       "3-runes": "3",
       "4-runes": "4",
       "5-runes": "5",
       "6-runes": "6",
-      "any-runes": "",
+      "any-sockets": "",
     };
 
-    setQuery((prev) => ({ ...prev, quantity: matcher[search] }));
+    setQuery((prev) => ({ ...prev, sockets: matcher[search] }));
   }, []);
 
   const onRunewordExpansionSearch = useCallback((search: string) => {
@@ -110,6 +95,74 @@ export const RunewordProvider = (props: Props) => {
     setQuery((prev) => ({ ...prev, expansion: matcher[search] }));
   }, []);
 
+  useUpdateEffect(() => {
+    if (clock.current != -1) {
+      window.clearTimeout(clock.current);
+    }
+
+    clock.current = window.setTimeout(() => {
+      setDeferred(query);
+    }, 300);
+
+    return () => {
+      if (clock.current != -1) {
+        window.clearTimeout(clock.current);
+      }
+    };
+  }, [query]);
+
+  useUpdateEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (query.search) {
+      params.set("search", query.search);
+    } else {
+      params.delete("search");
+    }
+
+    if (query.sockets) {
+      params.set("sockets", query.sockets);
+    } else {
+      params.delete("sockets");
+    }
+
+    if (query.expansion) {
+      params.set("expansion", query.expansion);
+    } else {
+      params.delete("expansion");
+    }
+
+    History.replace({ params });
+  }, [query]);
+
+  const runewords = useMemo(() => {
+    const resultByText = findRunewords(deferred.search);
+
+    const resultByExpansion =
+      deferred.expansion === ""
+        ? resultByText
+        : resultByText.filter(
+            (runeword) => runeword.expansion === deferred.expansion,
+          );
+
+    const resultByQuantity =
+      deferred.sockets === ""
+        ? resultByExpansion
+        : resultByExpansion.filter(
+            (runeword) => runeword.runes.length === Number(deferred.sockets),
+          );
+
+    const resultByGame =
+      deferred.game === ""
+        ? resultByQuantity
+        : resultByQuantity.filter((runeword) => {
+            if (deferred.game === "ladder") return Boolean(runeword.ladder);
+            return runeword;
+          });
+
+    return resultByGame;
+  }, [deferred]);
+
   return (
     <RunewordContext.Provider
       value={{
@@ -117,7 +170,7 @@ export const RunewordProvider = (props: Props) => {
         runewords,
         onRunewordSearch,
         onRunewordGameSearch,
-        onRunewordQuantitySearch,
+        onRunewordSocketsSearch,
         onRunewordExpansionSearch,
       }}
     >
@@ -125,5 +178,3 @@ export const RunewordProvider = (props: Props) => {
     </RunewordContext.Provider>
   );
 };
-
-export const useRunewordContext = () => useContext(RunewordContext) as Context;
